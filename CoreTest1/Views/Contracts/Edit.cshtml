@@ -1,0 +1,66 @@
+﻿@model CoreTest1.Models.Contract
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Edit</h2>
+
+<h4>Contract</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
+            <div class="form-group">
+                <label asp-for="Customer" class="control-label"></label>
+                <select asp-for="CustomerID" class="form-control" asp-items="ViewBag.CustomerID">
+                    <option value="">-- Оберіть клієнта --</option>
+                </select>
+                <span asp-validation-for="CustomerID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SignDate" class="control-label"></label>
+                <input asp-for="SignDate" class="form-control" />
+                <span asp-validation-for="SignDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                List<CoreTest1.Models.MyViewModel.PartInConData> parts = ViewBag.Parts;
+
+                                foreach (var part in parts)
+                                {
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedParts"
+                                               value="@part.PartID"
+                                               @(Html.Raw(part.Assigned ? "checked=\"checked\"" : "")) />
+                                        @part.PartID @:  @part.PartName @part.PartTypeName
+                                        <input type ="number"
+                                               name="quantity"
+                                               value="@part.Quantity" />
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+                </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

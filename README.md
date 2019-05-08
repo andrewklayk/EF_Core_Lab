@@ -1,6 +1,0 @@
-"# teleporohbot" 
-"# teleporohbot" 
-"# Lab-4" 
-"# Entity-Framework-Lab" 
-"# Entity-Framework-Lab" 
-"# EF_Core_Lab" 
