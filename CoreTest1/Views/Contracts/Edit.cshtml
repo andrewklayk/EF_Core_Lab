@@ -28,38 +28,35 @@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <table>
-                        <tr>
-                            @{
-                                List<CoreTest1.Models.MyViewModel.PartInConData> parts = ViewBag.Parts;
+                        @{
+                            List<CoreTest1.Models.MyViewModel.PartInConData> PartsInCon = ViewBag.Parts;
 
-                                foreach (var part in parts)
-                                {
-                                    @:<td>
-                                        <input type="checkbox"
+                            foreach (var part in PartsInCon)
+                            {
+                                @:<tr>
+                                    <td>
+                                        <input id="partCheckBox" type="checkbox"
                                                name="selectedParts"
                                                value="@part.PartID"
                                                @(Html.Raw(part.Assigned ? "checked=\"checked\"" : "")) />
-                                        @part.PartID @:  @part.PartName @part.PartTypeName
-                                        <input type ="number"
-                                               name="quantity"
-                                               value="@part.Quantity" />
-                                    @:</td>
-                                }
-                            @:</tr>
+                                        @part.PartName
+                                    </td>
+                                    <td>
+                                        <input id="quantityTextBox" type="number"
+                                               name="quantity" value="@part.Quantity" />
+                                    </td>@:</tr>
                             }
-                        </table>
-                    </div>
+                        }
+                    </table>
                 </div>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<a asp-action="Index">Back to List</a>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

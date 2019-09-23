@@ -20,10 +20,32 @@ namespace CoreTest1.Controllers
         }
 
         // GET: Lefts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            var rocketContext = _context.Lefts.Include(l => l.Part).Include(l => l.Stock);
-            return View(await rocketContext.ToListAsync());
+            ViewData["DateSortParm"] = string.IsNullOrEmpty(sortOrder) ? "date_asc" : "";
+            ViewData["QuantSortParm"] = sortOrder == "Quantity" ? "quantity_desc" : "Quantity";
+            ViewData["CurrentFilter"] = searchString;
+            IQueryable<Left> lefts = _context.Lefts.Include(l => l.Stock).Include(l => l.Part).ThenInclude(p => p.PartType);
+            int a; switch (sortOrder)
+            {
+                case "date_asc":
+                    lefts = lefts.OrderBy(s => s.ArrDate);
+                    break;
+                case "Quantity":
+                    lefts = lefts.OrderBy(s => s.Quantity);
+                    break;
+                case "quantity_desc":
+                    lefts = lefts.OrderByDescending(s => s.Quantity);
+                    break;
+                default:
+                    lefts = lefts.OrderByDescending(s => s.ArrDate);
+                    break;
+            }
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                lefts = lefts.Where(l => l.Part.Name.Contains(searchString) || l.Stock.Address.Contains(searchString) || (int.TryParse(searchString, out a) && a == l.Quantity));
+            }
+            return View(await lefts.ToListAsync());
         }
 
         // GET: Lefts/Details/5
@@ -49,8 +71,8 @@ namespace CoreTest1.Controllers
         // GET: Lefts/Create
         public IActionResult Create()
         {
-            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "ID");
-            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "ID");
+            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "Name");
+            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "Address");
             return View();
         }
 
@@ -59,7 +81,7 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,PartID,StockID,ArrDate,Quantity")] Left left)
+        public async Task<IActionResult> Create([Bind("PartID,StockID,ArrDate,Quantity")] Left left)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +89,8 @@ namespace CoreTest1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "ID", left.PartID);
-            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "ID", left.StockID);
+            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "Name", left.PartID);
+            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "Address", left.StockID);
             return View(left);
         }
 
@@ -85,8 +107,8 @@ namespace CoreTest1.Controllers
             {
                 return NotFound();
             }
-            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "ID", left.PartID);
-            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "ID", left.StockID);
+            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "Name", left.PartID);
+            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "Address", left.StockID);
             return View(left);
         }
 
@@ -95,7 +117,7 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,PartID,StockID,ArrDate,Quantity")] Left left)
+        public async Task<IActionResult> Edit(int id, [Bind("ID, PartID,StockID,ArrDate,Quantity")] Left left)
         {
             if (id != left.ID)
             {
@@ -122,8 +144,8 @@ namespace CoreTest1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "ID", left.PartID);
-            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "ID", left.StockID);
+            ViewData["PartID"] = new SelectList(_context.Parts, "ID", "Name", left.PartID);
+            ViewData["StockID"] = new SelectList(_context.Stocks, "ID", "Address", left.StockID);
             return View(left);
         }
 

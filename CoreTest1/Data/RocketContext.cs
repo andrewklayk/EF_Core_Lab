@@ -13,6 +13,7 @@ namespace CoreTest1.Data
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Position> Positions { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Part> Parts { get; set; }

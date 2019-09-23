@@ -20,9 +20,26 @@ namespace CoreTest1.Controllers
         }
 
         // GET: PartTypes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            return View(await _context.PartTypes.ToListAsync());
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+            var stocks = from s in _context.PartTypes
+                         select s;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                stocks = stocks.Where(s => s.Name.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    stocks = stocks.OrderByDescending(s => s.Name);
+                    break;
+                default:
+                    stocks = stocks.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(await stocks.ToListAsync());
         }
 
         // GET: PartTypes/Details/5
@@ -140,6 +157,12 @@ namespace CoreTest1.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var partType = await _context.PartTypes.FindAsync(id);
+            var partOfType = _context.Parts.FirstOrDefault(p => p.Type == id);
+            if(partOfType != null)
+            {
+                ModelState.AddModelError("", "Існують найменування, що належать до цього типу: " + partOfType.Name);
+                return View(partType);
+            }
             _context.PartTypes.Remove(partType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

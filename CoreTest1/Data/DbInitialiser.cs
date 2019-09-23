@@ -11,7 +11,7 @@ namespace CoreTest1.Data
         public static void Initialise(RocketContext context)
         {
 
-            if(!context.PartTypes.Any())
+            /*if(!context.PartTypes.Any())
             {
                 var TestTypes = new PartType[]
                 {
@@ -116,14 +116,7 @@ namespace CoreTest1.Data
                 }
 
                 context.SaveChanges();
-            }
-
-            if(!context.ContractItems.Any())
-            {
-                var Ci = new PartInContract { ContractID = context.Contracts.First().ID, PartID = context.Parts.First().ID, Quantity = 1};
-                context.ContractItems.Add(Ci);
-                context.Contracts.First().PartsInContr.Add(Ci);
-            }
+            }*/
 
             context.SaveChanges();
         }

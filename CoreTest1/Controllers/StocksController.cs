@@ -19,9 +19,26 @@ namespace CoreTest1.Controllers
         }
 
         // GET: Stocks
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            return View(await _context.Stocks.ToListAsync());
+            ViewData["AddressSortParm"] = string.IsNullOrEmpty(sortOrder) ? "address_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+            var stocks = from s in _context.Stocks
+                         select s;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                stocks = stocks.Where(s => s.Address.Contains(searchString));
+            }
+            switch(sortOrder)
+            {
+                case "address_desc":
+                    stocks = stocks.OrderByDescending(s => s.Address);
+                    break;
+                default:
+                    stocks = stocks.OrderBy(s => s.Address);
+                    break;
+            }
+            return View(await stocks.ToListAsync());
         }
 
         // GET: Stocks/Details/5
@@ -48,7 +65,29 @@ namespace CoreTest1.Controllers
         // GET: Stocks/Create
         public IActionResult Create()
         {
+            var viewModel = new List<PositionData>();
+            PopulateFullPositionList();
             return View();
+        }
+
+        private void PopulateFullPositionList()
+        {
+            List<PositionData> viewModel = new List<PositionData>();
+            foreach (var employee in _context.Employees)
+            {
+                if (employee == null)
+                {
+                    continue;
+                }
+                {
+                    viewModel.Add(new PositionData
+                    {
+                        EmployeeID = employee.ID,
+                        Name = employee.FirstName + employee.Surname,
+                    });
+                }
+            }
+            ViewData["Positions"] = viewModel;
         }
 
         // POST: Stocks/Create
@@ -56,15 +95,24 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Address")] Stock stock)
+        public async Task<IActionResult> Create([Bind("Address")] string[] selectedEmployees, Stock stock)
         {
+            if (_context.Stocks.Any(s => s.Address == stock.Address))
+            {
+                ModelState.AddModelError("Address", "Запис за такою адресою вже існує");
+                stock.Positions = new List<Position>();
+                UpdateStockEmployees(selectedEmployees, stock);
+                PopulatePositionsData(stock);
+                return View(stock);
+            }
             if (ModelState.IsValid)
             {
                 _context.Add(stock);
+                UpdateStockEmployees(selectedEmployees, stock);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            PopulatePositionsData(stock);
+            //PopulatePositionsData(stock);
             return View(stock);
         }
 
@@ -126,13 +174,12 @@ namespace CoreTest1.Controllers
                 return RedirectToAction(nameof(Index));
             }
             UpdateStockEmployees(selectedEmployees, stockToUpdate);
-            PopulatePositionsData(stockToUpdate);
             return View(stockToUpdate);
         }
 
         private void UpdateStockEmployees(string[] selectedEmployees, Stock stockToUpdate)
         {
-            if (selectedEmployees == null)
+            if (!selectedEmployees.Any())
             {
                 stockToUpdate.Positions = new List<Position>();
                 return;
@@ -147,7 +194,11 @@ namespace CoreTest1.Controllers
                 {
                     if (!StockEmployees.Contains(Employee.ID))
                     {
-                        stockToUpdate.Positions.Add(new Position { StockID = stockToUpdate.ID, EmployeeID = Employee.ID });
+                        var pos = new Position { StockID = stockToUpdate.ID, EmployeeID = Employee.ID };
+                        stockToUpdate.Positions.Add(pos);
+                        if (Employee.Positions == null)
+                            Employee.Positions = new List<Position>();
+                        Employee.Positions.Add(pos);
                     }
                 }
                 else
@@ -176,7 +227,7 @@ namespace CoreTest1.Controllers
                     Assigned = StockEmployees.Contains(Employee.ID)
                 });
             }
-            ViewData["Employees"] = viewModel;
+            ViewData["Positions"] = viewModel;
         }
 
         // GET: Stocks/Delete/5

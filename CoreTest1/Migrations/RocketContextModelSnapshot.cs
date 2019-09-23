@@ -15,7 +15,7 @@ namespace CoreTest1.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.8-servicing-32085")
+                .HasAnnotation("ProductVersion", "2.1.11-servicing-32099")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -34,27 +34,6 @@ namespace CoreTest1.Migrations
                     b.HasIndex("CustomerID");
 
                     b.ToTable("Contracts");
-                });
-
-            modelBuilder.Entity("CoreTest1.Models.ContractItem", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ContractID");
-
-                    b.Property<int>("PartID");
-
-                    b.Property<int>("Quantity");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ContractID");
-
-                    b.HasIndex("PartID");
-
-                    b.ToTable("ContractItems");
                 });
 
             modelBuilder.Entity("CoreTest1.Models.Customer", b =>
@@ -76,9 +55,12 @@ namespace CoreTest1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FirstName");
+                    b.Property<string>("FirstName")
+                        .IsRequired();
 
-                    b.Property<string>("Surname");
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(10);
 
                     b.HasKey("ID");
 
@@ -114,7 +96,8 @@ namespace CoreTest1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .IsRequired();
 
                     b.Property<int?>("PartTypeID");
 
@@ -125,6 +108,27 @@ namespace CoreTest1.Migrations
                     b.HasIndex("PartTypeID");
 
                     b.ToTable("Parts");
+                });
+
+            modelBuilder.Entity("CoreTest1.Models.PartInContract", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ContractID");
+
+                    b.Property<int>("PartID");
+
+                    b.Property<int>("Quantity");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ContractID");
+
+                    b.HasIndex("PartID");
+
+                    b.ToTable("ContractItems");
                 });
 
             modelBuilder.Entity("CoreTest1.Models.PartType", b =>
@@ -174,24 +178,26 @@ namespace CoreTest1.Migrations
                     b.ToTable("Stocks");
                 });
 
+            modelBuilder.Entity("CoreTest1.Models.User", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Password");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("CoreTest1.Models.Contract", b =>
                 {
                     b.HasOne("CoreTest1.Models.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CoreTest1.Models.ContractItem", b =>
-                {
-                    b.HasOne("CoreTest1.Models.Contract", "Contract")
-                        .WithMany("PartsInContr")
-                        .HasForeignKey("ContractID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoreTest1.Models.Part", "Part")
-                        .WithMany()
-                        .HasForeignKey("PartID")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -213,6 +219,19 @@ namespace CoreTest1.Migrations
                     b.HasOne("CoreTest1.Models.PartType", "PartType")
                         .WithMany()
                         .HasForeignKey("PartTypeID");
+                });
+
+            modelBuilder.Entity("CoreTest1.Models.PartInContract", b =>
+                {
+                    b.HasOne("CoreTest1.Models.Contract", "Contract")
+                        .WithMany("PartsInContr")
+                        .HasForeignKey("ContractID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CoreTest1.Models.Part", "Part")
+                        .WithMany()
+                        .HasForeignKey("PartID")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CoreTest1.Models.Position", b =>

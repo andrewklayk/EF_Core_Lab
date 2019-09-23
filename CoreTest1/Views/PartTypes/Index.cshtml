@@ -7,13 +7,24 @@
 <h2>Index</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Додати</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Знайти: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Пошук" class="btn btn-default" />
+            <a asp-action="Index">Назад</a>
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Name)</a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Units)
@@ -22,20 +33,21 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Units)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Units)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Змінити</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Детальніше</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Видалити</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

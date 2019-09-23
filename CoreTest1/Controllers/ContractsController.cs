@@ -41,9 +41,9 @@ namespace CoreTest1.Controllers
             var contract = await _context.Contracts
                 .Include(c => c.Customer)
                 .Include(c => c.PartsInContr)
-                .ThenInclude(pc => pc.Part)
-                .ThenInclude(p => p.PartType)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                    .ThenInclude(pc => pc.Part)
+                    .ThenInclude(p => p.PartType).AsNoTracking()
+                    .FirstOrDefaultAsync(m => m.ID == id);
             if (contract == null)
             {
                 return NotFound();
@@ -55,8 +55,25 @@ namespace CoreTest1.Controllers
         // GET: Contracts/Create
         public IActionResult Create()
         {
-            //ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "ID");
             PopulateCustomersDropDownList();
+            var viewModel = new List<PartInConData>();
+            foreach (var part in _context.Parts)
+            {
+                if (part == null)
+                {
+                    continue;
+                }
+                {
+                    viewModel.Add(new PartInConData
+                    {
+                        PartID = part.ID,
+                        PartName = part.Name,
+                        PartTypeName = _context.PartTypes.First(pt => pt.ID == part.Type).Name,
+                        Assigned = false
+                    });
+                }
+            }
+            ViewData["Parts"] = viewModel;
             return View();
         }
 
@@ -65,17 +82,19 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CustomerID,SignDate")] Contract contract)
+        public async Task<IActionResult> Create([Bind("CustomerID,SignDate")] string[] selectedParts, int[] quantity, Contract contract)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(contract);
+                contract.PartsInContr = new List<PartInContract>();
+                UpdateContractParts(selectedParts, quantity, contract);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             //ViewData["CustomerID"] = new SelectList(_context.Customers, "ID", "ID", contract.CustomerID);
-            PopulateCustomersDropDownList();
-            return View(contract);
+            //PopulateCustomersDropDownList();
+            return View();
         }
 
         // GET: Contracts/Edit/5
@@ -106,30 +125,24 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, string[] selectedParts)
+        public async Task<IActionResult> Edit(int? id, string[] selectedParts, int[] quantity)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var contractToUpdate = await _context.Contracts
-                .Include(c => c.Customer)
-                .Include(c => c.PartsInContr)
-                    .ThenInclude(p => p.Part)
-                .AsNoTracking()
+            var ContractToUpdate = await _context.Contracts
+                .Include(i => i.PartsInContr)
+                    .ThenInclude(i => i.Part)
                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (await TryUpdateModelAsync<Contract>(
-                contractToUpdate,
+                ContractToUpdate,
                 "",
-                c => c.SignDate, c => c.Customer))
+                c => c.SignDate, c => c.CustomerID))
             {
-                if (String.IsNullOrWhiteSpace(contractToUpdate.Customer?.Name))
-                {
-                    ModelState.AddModelError("", "Це поле є обов'язковим");
-                }
-                UpdateContractParts(selectedParts, contractToUpdate);
+                UpdateContractParts(selectedParts, quantity, ContractToUpdate);
                 try
                 {
                     await _context.SaveChangesAsync();
@@ -143,10 +156,9 @@ namespace CoreTest1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            UpdateContractParts(selectedParts, contractToUpdate);
-            //PopulatePartsData(contractToUpdate);
-            PopulateCustomersDropDownList();
-            return View(contractToUpdate);
+            UpdateContractParts(selectedParts, quantity, ContractToUpdate);
+            PopulatePartsData(ContractToUpdate);
+            return View(ContractToUpdate);
         }
 
         private void PopulateCustomersDropDownList(object selectedCustomer = null)
@@ -155,6 +167,7 @@ namespace CoreTest1.Controllers
                                    orderby c.Name
                                    select c;
             ViewBag.CustomerID = new SelectList(CustomersQuery, "ID", "Name", selectedCustomer);
+            ViewData["Customers"] = CustomersQuery;
         }
 
         private void PopulatePartsData(Contract contract)
@@ -168,35 +181,57 @@ namespace CoreTest1.Controllers
                 {
                     continue;
                 }
-                viewModel.Add(new PartInConData
+                if (contract.PartsInContr.Any(p => p.PartID == part.ID))
                 {
-                    PartID = part.ID,
-                    PartName = part.Name,
-                    PartTypeName = _context.PartTypes.First(pt => pt.ID == part.Type).Name,
-                    Assigned = ContractParts.Contains(part.ID)
-                });
+                    viewModel.Add(new PartInConData
+                    {
+                        PartID = part.ID,
+                        Quantity = contract.PartsInContr.First(p => p.PartID == part.ID).Quantity,
+                        PartName = part.Name,
+                        PartTypeName = _context.PartTypes.First(pt => pt.ID == part.Type).Name,
+                        Assigned = ContractParts.Contains(part.ID)
+                    });
+                }
+                else
+                {
+                    viewModel.Add(new PartInConData
+                    {
+                        PartID = part.ID,
+                        PartName = part.Name,
+                        PartTypeName = _context.PartTypes.First(pt => pt.ID == part.Type).Name,
+                        Assigned = ContractParts.Contains(part.ID)
+                    });
+                }
             }
             ViewData["Parts"] = viewModel;
         }
         
-        private void UpdateContractParts(string[] selectedParts, Contract contractToUpdate)
+        private void UpdateContractParts(string[] selectedParts, int[] quantity, Contract contractToUpdate)
         {
             if (selectedParts == null)
             {
                 contractToUpdate.PartsInContr = new List<PartInContract>();
                 return;
             }
-
             var selectedPartsHS = new HashSet<string>(selectedParts);
-            var contractParts = new HashSet<int>
-                (contractToUpdate.PartsInContr.Select(c => c.Part.ID));
+            HashSet<int> contractParts = new HashSet<int>();
+            if (contractToUpdate.PartsInContr != null)
+            {
+                contractParts = new HashSet<int>
+                    (contractToUpdate.PartsInContr.Select(c => c.Part.ID));
+            }
+            int counter = 0;
             foreach (var Part in _context.Parts)
             {
                 if (selectedPartsHS.Contains(Part.ID.ToString()))
                 {
                     if (!contractParts.Contains(Part.ID))
                     {
-                        contractToUpdate.PartsInContr.Add(new PartInContract { ContractID = contractToUpdate.ID, PartID = Part.ID });
+                        contractToUpdate.PartsInContr.Add(new PartInContract { ContractID = contractToUpdate.ID, PartID = Part.ID, Quantity = quantity[counter] });
+                    }
+                    else if (contractToUpdate.PartsInContr.ElementAt(counter).Quantity != quantity[counter])
+                    {
+                        contractToUpdate.PartsInContr.ElementAt(counter).Quantity = quantity[counter];
                     }
                 }
                 else
@@ -208,6 +243,7 @@ namespace CoreTest1.Controllers
                         _context.Remove(PartsToRemove);
                     }
                 }
+                counter++;
             }
         }
 

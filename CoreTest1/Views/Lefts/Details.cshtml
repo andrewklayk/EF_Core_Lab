@@ -4,10 +4,8 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
-
 <div>
-    <h4>Left</h4>
+    <h4>На складах</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -17,16 +15,22 @@
             @Html.DisplayFor(model => model.ArrDate)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Part)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Part.Name)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Quantity)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Quantity)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Part)
+            @Html.DisplayNameFor(model => model.Part.PartType.Units)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Part.ID)
+            @Html.DisplayFor(model => model.Part.PartType.Units)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Stock)

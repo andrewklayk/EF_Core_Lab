@@ -19,10 +19,36 @@ namespace CoreTest1.Controllers
             _context = context;
         }
 
-        // GET: Employees
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            return View(await _context.Employees.ToListAsync());
+            ViewData["SurnameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "Surname_desc" : "";
+            ViewData["NameSortParm"] = (sortOrder == "Name") ? "name_desc" : "Name";
+            ViewData["CurrentFilter"] = searchString;
+            var employees = from s in _context.Employees.Include(p => p.Positions)
+                        select s;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                employees = employees.Where(s => s.FirstName.Contains(searchString) || s.Surname.Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "Surname_desc":
+                    employees = employees.OrderByDescending(s => s.Surname);
+                    break;
+                case "Name":
+                    employees = employees.OrderBy(s => s.FirstName);
+                    break;
+                case "name_desc":
+                    employees = employees.OrderByDescending(s => s.FirstName);
+                    break;
+                default:
+                    employees = employees.OrderBy(s => (s.FirstName + s.Surname));
+                    break;
+            }
+
+            //var a = from s in _context.Lefts group s by s.PartID into r where r
+
+            return View(await employees.ToListAsync());
         }
 
         // GET: Employees/Details/5
@@ -133,7 +159,6 @@ namespace CoreTest1.Controllers
             {
                 return NotFound();
             }
-
             var employee = await _context.Employees
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (employee == null)
@@ -150,6 +175,13 @@ namespace CoreTest1.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var employee = await _context.Employees.FindAsync(id);
+            var stockWithEmpl = _context.Stocks.FirstOrDefault(s => s.Positions.Any(p => p.EmployeeID == id));
+            if (stockWithEmpl != null)
+            {
+                ModelState.AddModelError("", "Існують зв'язані записи у таблиці складів: " + stockWithEmpl.Address);
+                return View(employee);
+            }
+
             foreach(var pos in _context.Positions.Where(p=> p.EmployeeID == id))
             {
                 _context.Remove(pos);

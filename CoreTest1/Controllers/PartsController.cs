@@ -19,10 +19,26 @@ namespace CoreTest1.Controllers
             _context = context;
         }
 
-        // GET: Parts
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            return View(await _context.Parts.ToListAsync());
+            ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "Name_desc" : "";
+            ViewData["CurrentFilter"] = searchString;
+            var parts = from s in _context.Parts.Include(p=>p.PartType)
+                         select s;
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                parts = parts.Where(s => s.Name.Contains(searchString));
+            }
+            switch(sortOrder)
+            {
+                case "Name_desc":
+                    parts = parts.OrderByDescending(s => s.Name);
+                    break;
+                default:
+                    parts = parts.OrderBy(s => s.Name);
+                    break;
+            }
+            return View(await parts.ToListAsync());
         }
 
         // GET: Parts/Details/5
@@ -46,6 +62,7 @@ namespace CoreTest1.Controllers
         // GET: Parts/Create
         public IActionResult Create()
         {
+            PopulateTypesDropDownList();
             return View();
         }
 
@@ -54,11 +71,12 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Type")] Part part)
+        public async Task<IActionResult> Create([Bind("Name,Type")] Part part)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(part);
+                part.PartType = _context.PartTypes.Where(pt => pt.ID == part.Type).FirstOrDefault();
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -78,6 +96,7 @@ namespace CoreTest1.Controllers
             {
                 return NotFound();
             }
+            PopulateTypesDropDownList();
             return View(part);
         }
 
@@ -97,6 +116,7 @@ namespace CoreTest1.Controllers
             {
                 try
                 {
+                    part.PartType = _context.PartTypes.Where(pt => pt.ID == part.Type).FirstOrDefault();
                     _context.Update(part);
                     await _context.SaveChangesAsync();
                 }
@@ -113,7 +133,16 @@ namespace CoreTest1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            PopulateTypesDropDownList();
             return View(part);
+        }
+
+        private void PopulateTypesDropDownList(object selectedType = null)
+        {
+            var CustomersQuery = from c in _context.PartTypes
+                                 orderby c.Name
+                                 select c;
+            ViewBag.TypeID = new SelectList(CustomersQuery, "ID", "Name", selectedType);
         }
 
         // GET: Parts/Delete/5
@@ -124,7 +153,7 @@ namespace CoreTest1.Controllers
                 return NotFound();
             }
 
-            var part = await _context.Parts
+            var part = await _context.Parts.Include(p => p.PartType)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (part == null)
             {
@@ -140,6 +169,11 @@ namespace CoreTest1.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var part = await _context.Parts.FindAsync(id);
+            if(_context.Lefts.Any(c=>c.PartID == id))
+            {
+                ModelState.AddModelError("", "Неможливо видалити: існують залежні записи");
+                return View(part);
+            }
             _context.Parts.Remove(part);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

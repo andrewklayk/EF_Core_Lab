@@ -21,26 +21,19 @@
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <table>
-                        <tr>
                             @{
-                                int cnt = 0;
-                                List<CoreTest1.Models.MyViewModel.PositionData> Positions = ViewBag.Employees;
+                                List<CoreTest1.Models.MyViewModel.PositionData> Positions = ViewBag.Positions;
 
                                 foreach (var AssignedEmployee in Positions)
                                 {
-                                    if (cnt++ % 3 == 0)
-                        {
-                        @:</tr><tr>
-                        }
-                        @:<td>
-                            <input type="checkbox"
+                        <tr>
+                            <td><input type="checkbox"
                                    name="selectedEmployees"
                                    value="@AssignedEmployee.EmployeeID"
                                    @(Html.Raw(AssignedEmployee.Assigned ? "checked=\"checked\"" : "")) />
-                            @AssignedEmployee.EmployeeID @: @AssignedEmployee.Name
-                        @:</td>
+                            @AssignedEmployee.Name</td>
+                        </tr>
                     }
-                @:</tr>
                 }
             </table>
         </div>
