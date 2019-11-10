@@ -65,12 +65,12 @@ namespace CoreTest1.Controllers
         // GET: Stocks/Create
         public IActionResult Create()
         {
-            var viewModel = new List<PositionData>();
-            PopulateFullPositionList();
+            ViewData["Positions"] = PopulateFullPositionList();
+            
             return View();
         }
 
-        private void PopulateFullPositionList()
+        private List<PositionData> PopulateFullPositionList()
         {
             List<PositionData> viewModel = new List<PositionData>();
             foreach (var employee in _context.Employees)
@@ -87,7 +87,7 @@ namespace CoreTest1.Controllers
                     });
                 }
             }
-            ViewData["Positions"] = viewModel;
+            return viewModel;
         }
 
         // POST: Stocks/Create
@@ -95,15 +95,12 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Address")] string[] selectedEmployees, Stock stock)
+        public async Task<IActionResult> Create([Bind("Address", "lat", "longt")] string[] selectedEmployees, Stock stock)
         {
             if (_context.Stocks.Any(s => s.Address == stock.Address))
             {
                 ModelState.AddModelError("Address", "Запис за такою адресою вже існує");
-                stock.Positions = new List<Position>();
-                UpdateStockEmployees(selectedEmployees, stock);
-                PopulatePositionsData(stock);
-                return View(stock);
+                return View(stock); 
             }
             if (ModelState.IsValid)
             {
@@ -112,8 +109,13 @@ namespace CoreTest1.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            //PopulatePositionsData(stock);
-            return View(stock);
+            else
+            {
+                stock.Positions = new List<Position>();
+                UpdateStockEmployees(selectedEmployees, stock);
+                ViewData["Positions"] = PopulatePositionsData(stock);
+                return View(stock);
+            }
         }
 
         // GET: Stocks/Edit/5
@@ -133,7 +135,7 @@ namespace CoreTest1.Controllers
             {
                 return NotFound();
             }
-            PopulatePositionsData(stock);
+            ViewData["Positions"] = PopulatePositionsData(stock);
             return View(stock);
         }
 
@@ -213,7 +215,7 @@ namespace CoreTest1.Controllers
             }
         }
 
-        private void PopulatePositionsData(Stock Stock)
+        private List<PositionData> PopulatePositionsData(Stock Stock)
         {
             var allEmployees = _context.Employees;
             var StockEmployees = new HashSet<int>(Stock.Positions.Select(c => c.EmployeeID));
@@ -227,7 +229,7 @@ namespace CoreTest1.Controllers
                     Assigned = StockEmployees.Contains(Employee.ID)
                 });
             }
-            ViewData["Positions"] = viewModel;
+            return viewModel;
         }
 
         // GET: Stocks/Delete/5

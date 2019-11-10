@@ -72,7 +72,6 @@ C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\bin\Debug\netcoreapp2.1\Co
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\bin\Debug\netcoreapp2.1\CoreTest1.pdb
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\bin\Debug\netcoreapp2.1\CoreTest1.Views.dll
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\bin\Debug\netcoreapp2.1\CoreTest1.Views.pdb
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.csprojAssemblyReference.cache
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.csproj.CoreCompileInputs.cache
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.RazorAssemblyInfo.cache
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.RazorAssemblyInfo.cs
@@ -81,11 +80,6 @@ C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Co
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.TagHelpers.input.cache
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.TagHelpers.output.cache
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.RazorCoreGenerate.cache
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Contracts\Create.g.cshtml.cs
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Contracts\Delete.g.cshtml.cs
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Contracts\Details.g.cshtml.cs
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Contracts\Edit.g.cshtml.cs
-C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Contracts\Index.g.cshtml.cs
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Customers\Create.g.cshtml.cs
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Customers\Delete.g.cshtml.cs
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Razor\Views\Customers\Details.g.cshtml.cs
@@ -132,3 +126,4 @@ C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\Co
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.dll
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.pdb
 C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.csproj.CopyComplete
+C:\Users\Andrew\Downloads\repos\EF_Core_Lab\CoreTest1\obj\Debug\netcoreapp2.1\CoreTest1.csprojAssemblyReference.cache

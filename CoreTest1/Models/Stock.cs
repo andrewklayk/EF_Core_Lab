@@ -12,6 +12,10 @@ namespace CoreTest1.Models
         [Display(Name = "Адреса")]
         public string Address { get; set; }
 
+        public double lat { get; set; }
+        
+        public double longt { get; set; }
+
         [Display(Name = "Працівники")]
         public ICollection<Position> Positions { get; set; }
     }

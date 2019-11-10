@@ -19,23 +19,6 @@ namespace CoreTest1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("CoreTest1.Models.Contract", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CustomerID");
-
-                    b.Property<DateTime>("SignDate");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("CustomerID");
-
-                    b.ToTable("Contracts");
-                });
-
             modelBuilder.Entity("CoreTest1.Models.Customer", b =>
                 {
                     b.Property<int>("ID")
@@ -96,6 +79,10 @@ namespace CoreTest1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Descr");
+
+                    b.Property<string>("ImgSource");
+
                     b.Property<string>("Name")
                         .IsRequired();
 
@@ -108,27 +95,6 @@ namespace CoreTest1.Migrations
                     b.HasIndex("PartTypeID");
 
                     b.ToTable("Parts");
-                });
-
-            modelBuilder.Entity("CoreTest1.Models.PartInContract", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ContractID");
-
-                    b.Property<int>("PartID");
-
-                    b.Property<int>("Quantity");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("ContractID");
-
-                    b.HasIndex("PartID");
-
-                    b.ToTable("ContractItems");
                 });
 
             modelBuilder.Entity("CoreTest1.Models.PartType", b =>
@@ -173,6 +139,10 @@ namespace CoreTest1.Migrations
 
                     b.Property<string>("Address");
 
+                    b.Property<double>("lat");
+
+                    b.Property<double>("longt");
+
                     b.HasKey("ID");
 
                     b.ToTable("Stocks");
@@ -193,14 +163,6 @@ namespace CoreTest1.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CoreTest1.Models.Contract", b =>
-                {
-                    b.HasOne("CoreTest1.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("CoreTest1.Models.Left", b =>
                 {
                     b.HasOne("CoreTest1.Models.Part", "Part")
@@ -219,19 +181,6 @@ namespace CoreTest1.Migrations
                     b.HasOne("CoreTest1.Models.PartType", "PartType")
                         .WithMany()
                         .HasForeignKey("PartTypeID");
-                });
-
-            modelBuilder.Entity("CoreTest1.Models.PartInContract", b =>
-                {
-                    b.HasOne("CoreTest1.Models.Contract", "Contract")
-                        .WithMany("PartsInContr")
-                        .HasForeignKey("ContractID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CoreTest1.Models.Part", "Part")
-                        .WithMany()
-                        .HasForeignKey("PartID")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CoreTest1.Models.Position", b =>

@@ -12,8 +12,12 @@ namespace CoreTest1.Models
         [Display(Name = "Найменування")]
         [Required(ErrorMessage = "Це поле є обов'язковим")]
         public string Name { get; set; }
+        [Display(Name = "Опис")]
+        public string Descr { get; set; }
         [Display(Name = "Тип")]
         public int Type { get; set; }
+
+        public string ImgSource { get; set; }
 
         public PartType PartType { get; set; }
     }

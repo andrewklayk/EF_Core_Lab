@@ -15,13 +15,11 @@ namespace CoreTest1.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Position> Positions { get; set; }
-        public DbSet<Contract> Contracts { get; set; }
         public DbSet<Part> Parts { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Left> Lefts { get; set; }
         public DbSet<PartType> PartTypes { get; set; }
-        public DbSet<PartInContract> ContractItems { get; set; }
     }
 }

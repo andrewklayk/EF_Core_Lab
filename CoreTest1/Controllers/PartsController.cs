@@ -18,7 +18,6 @@ namespace CoreTest1.Controllers
         {
             _context = context;
         }
-
         public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "Name_desc" : "";
@@ -71,7 +70,7 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type")] Part part)
+        public async Task<IActionResult> Create([Bind("Name,Descr,Type,ImgSource")] Part part)
         {
             if (ModelState.IsValid)
             {
@@ -105,7 +104,7 @@ namespace CoreTest1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Type")] Part part)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Descr,Type,ImgSource")] Part part)
         {
             if (id != part.ID)
             {

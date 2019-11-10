@@ -40,7 +40,7 @@ namespace CoreTest1.Controllers
                     customers = customers.OrderBy(s => s.Name);
                     break;
             }
-            var c = from cust in _context.Customers where !(_context.Contracts.Any(cont => cont.CustomerID == cust.ID)) select cust;
+            var c = from cust in _context.Customers select cust;
             //return View(await customers.ToListAsync());
             //return Content(System.Net.HttpStatusCode.OK, new List<string> { "", ""});
             return c;
@@ -66,9 +66,10 @@ namespace CoreTest1.Controllers
         }
 
         // GET: Customers/Create
-        /*public IActionResult Create()
+        /*[HttpGet]
+        public async Task<ActionResult<IEnumerable<Customer>>> Create()
         {
-            return View();
+            return await _context.Customers.ToListAsync();
         }*/
 
         //POST: Customers/Create
@@ -83,22 +84,6 @@ namespace CoreTest1.Controllers
             }
             return CreatedAtAction(nameof(Details), new { id = customer.ID }, customer);
         }
-
-        // GET: Customers/Edit/5
-        /*public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-            return View(customer);
-        }*/
 
         // POST: Customers/Edit/5
         [HttpPut("{id}")]
@@ -131,24 +116,6 @@ namespace CoreTest1.Controllers
             }
             return NoContent();
         }
-
-        // GET: Customers/Delete/5
-        /*public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
-        }*/
 
         //POST: Customers/Delete/5
         //[HttpPost, ActionName("Delete")]

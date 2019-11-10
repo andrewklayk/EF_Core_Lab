@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using CoreTest1.Models;
 using Microsoft.EntityFrameworkCore;
 using CoreTest1.Data;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace CoreTest1
 {
@@ -50,6 +52,23 @@ namespace CoreTest1
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var ci = new CultureInfo("en-US");
+            ci.NumberFormat.CurrencySymbol = "€";
+
+            CultureInfo.DefaultThreadCurrentCulture = ci;
+            CultureInfo.DefaultThreadCurrentUICulture = ci;
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(ci),
+                SupportedCultures = new List<CultureInfo>
+    {
+        ci,
+                },
+                SupportedUICultures = new List<CultureInfo>
+    {
+        ci,
+                }
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAC3I0uE9H9kOhCcg+p1RvFwAAAAACAAAAAAAQZgAAAAEAACAAAAAS0Gjd0RDe785gf4baniZbmlEPvmCsnjBtn2CYWOrZSwAAAAAOgAAAAAIAACAAAADCmbZRbzCUoWEHTWLDaxwpUY6SurYnYGlI+Hj5U/SmHoAAAACvjLvYr2GLU1oL+kA8HvJaDG5EcRWj1LPdsMRyVKHoOKCshHo9hbhLSZ+ORfUBGGQ322joCM+NzFm97a0+Dpaux6HHQD5wBhMlNftLyEcMZKXyfvy//qLZ0LYOpi/QGjHAD6b7HvAFtU2rOdhlOtw1NxmhhwvJGRB6FG/usCsUmkAAAADsBeuule6FVV/f3ozJkd06Rp1W/oHIpdmZuIAQ55RPvfpP6NTH/ufIaWvXdOXUUgOs285Wcx4dVxBamocI529L</EncryptedPassword>
+  </PropertyGroup>
+  <ItemGroup>
+    <EFMigrations Include="CoreTest1.Data.RocketContext">
+      <Value>Data Source=tcp:coretest120190930111610dbserver.database.windows.net,1433%3bInitial Catalog=CoreTest120190930111610_db%3bUser Id=andrew%40coretest120190930111610dbserver%3bPassword=dj_eban123</Value>
+    </EFMigrations>
+  </ItemGroup>
+</Project>
