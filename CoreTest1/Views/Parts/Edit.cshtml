@@ -3,44 +3,61 @@
 @{
     ViewData["Title"] = "Edit";
 }
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descr" class="control-label"></label>
-                <input asp-for="Descr" class="form-control" />
-                <span asp-validation-for="Descr" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ImgSource" class="control-label"></label>
-                <input asp-for="ImgSource" class="form-control" />
-                <span asp-validation-for="ImgSource" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="Type" class="form-control" asp-items="ViewBag.TypeID">
-                    <option value="">-- Оберіть категорію --</option>
-                </select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
+
+    <head>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+        $(document).ready(function () {
+            $('#Type').autocomplete({
+                delay: 500,
+                source: '/api/PartTypesRest/search',
+                /*select: function (event, ui) {
+                    var e = ui.item;
+                    var Type = e.value;
+                    $("#Type").val(Type);
+                }*/
+            });
+        });
+        </script>
+    </head>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="ID" />
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Descr" class="control-label"></label>
+                    <input asp-for="Descr" class="form-control" />
+                    <span asp-validation-for="Descr" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ImgSource" class="control-label"></label>
+                    <input asp-for="ImgSource" class="form-control" />
+                    <span asp-validation-for="ImgSource" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Type" class="control-label"></label>
+                    <input type="text" id="Type" name="Type" class="btn btn-primary" placeholder="Введіть слово...">
+                    <span asp-validation-for="Type" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }

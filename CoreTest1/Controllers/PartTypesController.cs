@@ -20,7 +20,7 @@ namespace CoreTest1.Controllers
         }
 
         // GET: PartTypes
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        /*public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewData["NameSortParm"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["CurrentFilter"] = searchString;
@@ -40,6 +40,19 @@ namespace CoreTest1.Controllers
                     break;
             }
             return View(await stocks.ToListAsync());
+        }*/
+
+        public async Task<IActionResult> Index(string typeName)
+        {
+            if(typeName != null)
+            {
+                var typesList = _context.PartTypes.Where(pt => pt.Name.Contains(typeName)).ToListAsync();
+                return View(await typesList);
+            }
+            else
+            {
+                return View(await _context.PartTypes.ToListAsync());
+            }
         }
 
         // GET: PartTypes/Details/5

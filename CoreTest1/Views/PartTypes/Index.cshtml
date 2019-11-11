@@ -3,6 +3,22 @@
 @{
     ViewData["Title"] = "Index";
 }
+<head>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#typeName').autocomplete({
+                delay: 500,
+                source: '/api/PartTypesRest/search',
+                select: function (event, ui) {
+                    var e = ui.item;
+                    var result = e.id;
+                }
+            });
+        });
+    </script>
+</head>
 
 <h2>Index</h2>
 
@@ -10,13 +26,12 @@
     <a asp-action="Create">Додати</a>
 </p>
 
-<form asp-action="Index" method="get">
-    <div class="form-actions no-color">
-        <p>
-            Знайти: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
-            <input type="submit" value="Пошук" class="btn btn-default" />
-            <a asp-action="Index">Назад</a>
-        </p>
+<form asp-controller="PartTypes" asp-action="Index">
+    <div class="input-group">
+        <input type="text" id="typeName" name="typeName" class="btn btn-primary" placeholder="Введіть слово...">
+        <div class="input-group">
+            <button class="btn btn-primary" type="submit">Пошук</button>
+        </div>
     </div>
 </form>
 

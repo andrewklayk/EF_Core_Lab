@@ -70,7 +70,7 @@ using CoreTest1.Models;
                     ");
             EndContext();
             BeginContext(392, 82, false);
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "347ce68ee821454fac56d4c8ea516ff3", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "92c772a45b0c4afc930bc3edea3c6a14", async() => {
                 BeginContext(463, 7, true);
                 WriteLiteral("ТЕХНІКА");
                 EndContext();

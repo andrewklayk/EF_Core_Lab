@@ -12,72 +12,56 @@ namespace CoreTest1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class Parts1Controller : ControllerBase
+    public class CustomersController : ControllerBase
     {
         private readonly RocketContext _context;
 
-        public Parts1Controller(RocketContext context)
+        public CustomersController(RocketContext context)
         {
             _context = context;
         }
 
-        [Produces("application/json")]
-        [HttpGet("search")]
-        public async Task<IActionResult> Populate()
-        {
-            try
-            {
-                string term = HttpContext.Request.Query["term"].ToString();
-                var names = _context.PartTypes.Where(p => p.Name.Contains(term)).Select(p => p.Name).ToList();
-                return Ok(names);
-            }
-            catch
-            {
-                return BadRequest();
-            }
-        }
-
-        // GET: api/Parts1
+        // GET: api/Customers
         [HttpGet]
-        public IEnumerable<Part> GetParts()
+        public IEnumerable<Customer> GetCustomers()
         {
-            return _context.Parts;
+            return _context.Customers;
         }
 
-        // GET: api/Parts1/5
+        // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPart([FromRoute] int id)
+        public async Task<IActionResult> GetCustomer([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var part = await _context.Parts.FindAsync(id);
+            var customer = await _context.Customers.FindAsync(id);
 
-            if (part == null)
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            return Ok(part);
+            return Ok(customer);
         }
 
-        // PUT: api/Parts1/5
+        // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPart([FromRoute] int id, [FromBody] Part part)
+        public async Task<IActionResult> PutCustomer([FromRoute] int id, [FromBody] Customer customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != part.ID)
+            if (id != customer.ID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(part).State = EntityState.Modified;
+            _context.Entry(customer).State = EntityState.Modified;
 
             try
             {
@@ -85,7 +69,7 @@ namespace CoreTest1.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PartExists(id))
+                if (!CustomerExists(id))
                 {
                     return NotFound();
                 }
@@ -98,45 +82,45 @@ namespace CoreTest1.Controllers
             return NoContent();
         }
 
-        // POST: api/Parts1
+        // POST: api/Customers
         [HttpPost]
-        public async Task<IActionResult> PostPart([FromBody] Part part)
+        public async Task<IActionResult> PostCustomer([FromBody] Customer customer)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Parts.Add(part);
+            _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPart", new { id = part.ID }, part);
+            return CreatedAtAction("GetCustomer", new { id = customer.ID }, customer);
         }
 
-        // DELETE: api/Parts1/5
+        // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePart([FromRoute] int id)
+        public async Task<IActionResult> DeleteCustomer([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var part = await _context.Parts.FindAsync(id);
-            if (part == null)
+            var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Parts.Remove(part);
+            _context.Customers.Remove(customer);
             await _context.SaveChangesAsync();
 
-            return Ok(part);
+            return Ok(customer);
         }
 
-        private bool PartExists(int id)
+        private bool CustomerExists(int id)
         {
-            return _context.Parts.Any(e => e.ID == id);
+            return _context.Customers.Any(e => e.ID == id);
         }
     }
 }
